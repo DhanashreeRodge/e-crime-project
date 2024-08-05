@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -58,6 +60,7 @@ public class User extends BaseEntity {
 	private String firstName;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
 	@Size(min = 2, max = 50)
@@ -68,6 +71,7 @@ public class User extends BaseEntity {
 	private String password;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private Role role;
 
 	@OneToMany(/*mappedBy = "user",*/ cascade = CascadeType.ALL)
