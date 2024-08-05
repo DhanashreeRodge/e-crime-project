@@ -53,19 +53,19 @@ public class Complaint extends BaseEntity {
 	    @Size(max = 255)
 	    private String location;
 
-	    @ManyToOne
-	    @NotNull
-	    private User user;
-	    
-	    @ManyToOne(cascade = CascadeType.ALL)
-	    @NotNull
-	    private PoliceStation policeStation; // Added relationship to PoliceStation
+//	    //@ManyToOne
+//	    //@NotNull
+//	    private User user;
+//	    
+//	    @ManyToOne(cascade = CascadeType.ALL)
+//	    @NotNull
+//	    private PoliceStation policeStation; // Added relationship to PoliceStation
 	    
 	    @OneToOne
 	    @NotNull
 	    private Feedback complaint_feedback;
 	    
-	    @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @OneToMany(/*mappedBy = "complaint", */cascade = CascadeType.ALL, orphanRemoval = true)
 	    private Set<Missing_Person> missingPersons; // Added relationship to Missing_Person
 	    
 	    

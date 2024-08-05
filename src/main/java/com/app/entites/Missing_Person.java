@@ -40,10 +40,10 @@ public class Missing_Person extends BaseEntity {
 	
 	private int age;
 	
-	@ManyToOne
-    @NotNull
-    private Complaint complaint; // Added relationship to Complaint
-    
-	
+//	@ManyToOne
+//    @NotNull
+//    private Complaint complaint; // Added relationship to Complaint
+//    
+//	
 
 }

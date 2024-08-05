@@ -28,10 +28,11 @@ public class PoliceStation extends BaseEntity {
 	    @Size( max = 255)
 	    private String area;
 
-	    @OneToMany(mappedBy = "policeStation")
+	    @OneToMany(mappedBy = "policeStation",cascade = CascadeType.ALL, orphanRemoval = true)
 	    private Set<PoliceConstable> policeConstables;
 	    
-	    @OneToMany(mappedBy = "policeStation", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @OneToMany(/*mappedBy = "policeStation",*/ cascade = CascadeType.ALL, orphanRemoval = true)
 	    private Set<Complaint> complaints; // Added relationship to Complaint
 
 }
+																																																																							

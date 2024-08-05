@@ -27,58 +27,77 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Table(name="user")
+@Table(name = "user")
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 public class User extends BaseEntity {
-	
 
-	@OneToOne(cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id")
 	private Address address;
 
-    @NotNull
-    @Positive
-    private double contactNo;
+	@NotNull
+	@Positive
+	private double contactNo;
 
-    @NotNull
-    @Past
-    private LocalDate dob;
+	@NotNull
+	@Past
+	private LocalDate dob;
 
-    @NotNull
-    @Email
-    @Size(max = 100)
-    private String emailId;
+	@NotNull
+	@Email
+	@Size(max = 100)
+	private String emailId;
 
-    @NotBlank
-    @Size(min = 2, max = 50)
-    private String firstName;
+	@NotBlank
+	@Size(min = 2, max = 50)
+	private String firstName;
 
-    @NotNull
-    private Gender gender;
+	@NotNull
+	private Gender gender;
 
-    @Size(min = 2, max = 50)
-    private String lastName;
+	@Size(min = 2, max = 50)
+	private String lastName;
 
-    @NotBlank
-    @Size(min = 8, max = 20)
-    private String password;
+	@NotBlank
+	@Size(min = 8, max = 20)
+	private String password;
 
-    @NotNull
-    private Role role;
+	@NotNull
+	private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Complaint> complaints;
+	@OneToMany(/*mappedBy = "user",*/ cascade = CascadeType.ALL)
+	private Set<Complaint> complaints;
 
 //    @OneToMany(mappedBy = "user")
 //    private Set<Feedback> feedbacks;
-    
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Feedback feedback;
 
+	@OneToOne(/* mappedBy = "user", */ cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Feedback feedback;
+
+	public User(Address address, @NotNull @Positive double contactNo, @NotNull @Past LocalDate dob,
+			@NotNull @Email @Size(max = 100) String emailId, @NotBlank @Size(min = 2, max = 50) String firstName,
+			@NotNull Gender gender, @Size(min = 2, max = 50) String lastName,
+			@NotBlank @Size(min = 8, max = 20) String password, Set<Complaint> complaints, Feedback feedback) {
+		super();
+		this.address = address;
+		this.contactNo = contactNo;
+		this.dob = dob;
+		this.emailId = emailId;
+		this.firstName = firstName;
+		this.gender = gender;
+		this.lastName = lastName;
+		this.password = password;
+		this.complaints = complaints;
+		this.feedback = feedback;
+	}
+
+	public User() {
+		this.role = Role.ROLE_USER;
+	}
 
 }

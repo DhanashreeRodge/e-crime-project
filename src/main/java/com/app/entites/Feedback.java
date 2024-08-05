@@ -34,9 +34,9 @@ public class Feedback extends BaseEntity {
 	    @PastOrPresent
 	    private LocalDate feedbackDate;
 
-	    @OneToOne
-	    @NotNull
-	    private User user;
+//	    @OneToOne
+//	    @NotNull
+//	    private User user;
 
 
 }
