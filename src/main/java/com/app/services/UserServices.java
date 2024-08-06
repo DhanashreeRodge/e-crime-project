@@ -2,19 +2,24 @@ package com.app.services;
 
 import javax.transaction.Transactional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.Complaintdto;
+import com.app.dto.Feedbackdto;
 import com.app.dto.Userdto;
 import com.app.entites.Address;
 import com.app.entites.Complaint;
+import com.app.entites.Feedback;
 import com.app.entites.User;
 import com.app.enums.Category;
 import com.app.enums.Gender;
 import com.app.enums.Role;
 import com.app.enums.Status;
+import com.app.exception.ResourceNotFoundException;
 import com.app.repository.IComplaintRepository;
+import com.app.repository.IFeedbackRepository;
 import com.app.repository.IUserRepository;
 
 @Service
@@ -26,6 +31,11 @@ public class UserServices implements IUserServices {
 
 	@Autowired
 	private IComplaintRepository complaintRepository;
+	
+	@Autowired
+	private IFeedbackRepository feedbackRepository;
+	@Autowired
+	private ModelMapper modelmapper;
 
 	@Override
 	public User addUser(Userdto userdto) {
@@ -83,6 +93,36 @@ public class UserServices implements IUserServices {
 		return savedComplaint;
 		// Save the complaint entity
 		//return complaintRepository.save(complaints);
+	}
+
+//	@Override
+//	public Feedback addFeedback(Feedbackdto feedbackdto) {
+//		
+//		User feedback = userRepository.findById(feedbackdto.getUserId())
+//				.orElseThrow(()->
+//				new ResourceNotFoundException("Invalid Id"));
+//		
+//		
+//		Feedback feed=modelmapper.map(feedbackdto, Feedback.class);
+//		feed.setUser(feedback);
+//		return feedbackRepository.save(feed);
+//				
+//			}
+//
+	@Override
+	public Feedback addFeedback(Feedbackdto feedbackdto) {
+	    // Fetch the User entity based on userId from the Feedbackdto
+	    User user = userRepository.findById(feedbackdto.getUserId())
+	            .orElseThrow(() -> new ResourceNotFoundException("Invalid User Id"));
+
+	    // Map Feedbackdto to Feedback entity
+	    Feedback feedback = modelmapper.map(feedbackdto, Feedback.class);
+
+	    // Set the fetched User entity in the Feedback entity
+	    feedback.setUser(user);
+
+	    // Save the Feedback entity in the repository
+	    return feedbackRepository.save(feedback);
 	}
 
 }

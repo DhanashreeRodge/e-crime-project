@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.Complaintdto;
+import com.app.dto.Feedbackdto;
 import com.app.dto.Userdto;
 import com.app.services.IUserServices;
 
@@ -53,6 +54,8 @@ public class UserController {
     @PostMapping("/register")
     public Userdto addUser(@RequestBody Userdto user) {
         System.out.println("In controller add user");
+        
+        
         userServices.addUser(user);
         return user;
     }
@@ -65,4 +68,18 @@ public class UserController {
 		return complaintdto;
     	
     }
+    
+    @PostMapping("/feedback")
+    public Feedbackdto addFeedback(@RequestBody Feedbackdto feedbackdto)
+    {
+    	System.out.println("In controller add feedback");
+    	
+    	userServices.addFeedback(feedbackdto);
+		return feedbackdto;
+    	
+    }
+    
+//    @Postmapping("/missing")
+//    public 
+//}
 }

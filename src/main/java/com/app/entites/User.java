@@ -77,16 +77,16 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Complaint> complaints;
 
-//    @OneToMany(mappedBy = "user")
-//    private Set<Feedback> feedbacks;
+    @OneToMany
+    private Set<Feedback> feedbacks;
 
-	@OneToOne(/* mappedBy = "user", */ cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Feedback feedback;
+//	@OneToOne(/* mappedBy = "user", */ cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private Feedback feedback;
 
 	public User(Address address, @NotNull @Positive double contactNo, @NotNull @Past LocalDate dob,
 			@NotNull @Email @Size(max = 100) String emailId, @NotBlank @Size(min = 2, max = 50) String firstName,
 			@NotNull Gender gender, @Size(min = 2, max = 50) String lastName,
-			@NotBlank @Size(min = 8, max = 20) String password, Set<Complaint> complaints, Feedback feedback) {
+			@NotBlank @Size(min = 8, max = 20) String password, Set<Complaint> complaints, Set<Feedback> feedback) {
 		super();
 		this.address = address;
 		this.contactNo = contactNo;
@@ -97,7 +97,7 @@ public class User extends BaseEntity {
 		this.lastName = lastName;
 		this.password = password;
 		this.complaints = complaints;
-		this.feedback = feedback;
+		this.feedbacks = feedback;
 	}
 
 	public User() {
