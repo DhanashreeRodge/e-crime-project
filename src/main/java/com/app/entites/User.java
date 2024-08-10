@@ -44,7 +44,7 @@ public class User extends BaseEntity {
 
 	@NotNull
 	@Positive
-	private double contactNo;
+	private String contactNo;
 
 	@NotNull
 	@Past
@@ -67,7 +67,7 @@ public class User extends BaseEntity {
 	private String lastName;
 
 	@NotBlank
-	@Size(min = 8, max = 20)
+	@Size(min = 5, max = 20)
 	private String password;
 
 	@NotNull
@@ -83,10 +83,10 @@ public class User extends BaseEntity {
 //	@OneToOne(/* mappedBy = "user", */ cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	private Feedback feedback;
 
-	public User(Address address, @NotNull @Positive double contactNo, @NotNull @Past LocalDate dob,
+	public User(Address address, @NotNull @Positive String contactNo, @NotNull @Past LocalDate dob,
 			@NotNull @Email @Size(max = 100) String emailId, @NotBlank @Size(min = 2, max = 50) String firstName,
 			@NotNull Gender gender, @Size(min = 2, max = 50) String lastName,
-			@NotBlank @Size(min = 8, max = 20) String password, Set<Complaint> complaints, Set<Feedback> feedback) {
+			@NotBlank @Size(min = 5, max = 20) String password, Set<Complaint> complaints, Set<Feedback> feedback) {
 		super();
 		this.address = address;
 		this.contactNo = contactNo;

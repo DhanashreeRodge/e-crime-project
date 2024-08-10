@@ -62,6 +62,12 @@ public class Complaint extends BaseEntity {
 	    @ManyToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "user_id")
 	    private User user;
+	    
+	    @ManyToOne(fetch= FetchType.LAZY)
+	    @JoinColumn(name="police_constable_id")
+	    private PoliceConstable assignedPoliceConstable;
+	    
+	    
 //	    
 //	    @ManyToOne(cascade = CascadeType.ALL)
 //	    @NotNull
@@ -71,7 +77,7 @@ public class Complaint extends BaseEntity {
 	    //@NotNull
 	    private Feedback complaint_feedback;
 	    
-	    @OneToMany(/*mappedBy = "complaint", */cascade = CascadeType.ALL, orphanRemoval = true)
+	    @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true)
 	    private Set<Missing_Person> missingPersons; // Added relationship to Missing_Person
 	    
 	    

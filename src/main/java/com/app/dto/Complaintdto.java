@@ -11,13 +11,17 @@ import javax.validation.constraints.Size;
 import com.app.enums.Category;
 import com.app.enums.Status;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Complaintdto {
 
 	@NotNull

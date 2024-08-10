@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import com.app.dto.Complaintdto;
 import com.app.dto.Feedbackdto;
+import com.app.dto.MissingPersondto;
 import com.app.dto.Userdto;
 import com.app.entites.Address;
 import com.app.entites.Complaint;
 import com.app.entites.Feedback;
+import com.app.entites.Missing_Person;
 import com.app.entites.User;
 import com.app.enums.Category;
 import com.app.enums.Gender;
@@ -20,6 +22,7 @@ import com.app.enums.Status;
 import com.app.exception.ResourceNotFoundException;
 import com.app.repository.IComplaintRepository;
 import com.app.repository.IFeedbackRepository;
+import com.app.repository.IMissingPersonRepository;
 import com.app.repository.IUserRepository;
 
 @Service
@@ -34,6 +37,9 @@ public class UserServices implements IUserServices {
 	
 	@Autowired
 	private IFeedbackRepository feedbackRepository;
+	
+	@Autowired
+	private IMissingPersonRepository missingPersonRepository;
 	@Autowired
 	private ModelMapper modelmapper;
 
@@ -124,5 +130,52 @@ public class UserServices implements IUserServices {
 	    // Save the Feedback entity in the repository
 	    return feedbackRepository.save(feedback);
 	}
+
+	@Override
+	public Missing_Person addMissingPerson(MissingPersondto missingdto) {
+		
+		Complaint complaints=complaintRepository.findById(missingdto.getComplaintId())
+				.orElseThrow(() -> new ResourceNotFoundException("Invalid Complaint Id"));
+		
+		Missing_Person ms=modelmapper.map(missingdto, Missing_Person.class);
+		
+		ms.setComplaint(complaints);
+		
+		
+		return missingPersonRepository.save(ms);
+	}
+
+	@Override
+	public User editUser(Long id,Userdto userdto) {
+		
+		User existingUser=userRepository.findById(id)
+				.orElseThrow(() ->new RuntimeException("Invalid User Id"));
+		
+		modelmapper.map(userdto, existingUser);
+		
+		
+		return userRepository.save(existingUser);
+	}
+
+	@Override
+	public Complaint editComplaint(Long id, Complaintdto cdto) {
+
+		Complaint existingComplaint=complaintRepository.findById(id)
+				.orElseThrow(()-> new RuntimeException("Invalid Complaint Id"));
+		
+		modelmapper.map(cdto,existingComplaint);
+		return complaintRepository.save(existingComplaint);
+	}
+
+	@Override
+	public Missing_Person editMissingPerson(Long id, MissingPersondto cdto) {
+
+		Missing_Person ms=missingPersonRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Invalid Missing Person Id"));
+		modelmapper.map(cdto,ms);
+		return missingPersonRepository.save(ms);
+	}
+	
+	
 
 }

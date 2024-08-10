@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -28,11 +29,11 @@ public class PoliceStation extends BaseEntity {
 	    @Size( max = 255)
 	    private String area;
 
-	    @OneToMany(mappedBy = "policeStation",cascade = CascadeType.ALL, orphanRemoval = true)
+	    @OneToMany(mappedBy = "policeStation",cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	    private Set<PoliceConstable> policeConstables;
 	    
-	    @OneToMany(/*mappedBy = "policeStation",*/ cascade = CascadeType.ALL, orphanRemoval = true)
-	    private Set<Complaint> complaints; // Added relationship to Complaint
+//	    @OneToMany(/*mappedBy = "policeStation",*/ cascade = CascadeType.ALL, orphanRemoval = true)
+//	    private Set<Complaint> complaints; // Added relationship to Complaint
 
 }
 																																																																							

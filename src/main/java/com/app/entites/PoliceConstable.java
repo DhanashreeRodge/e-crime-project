@@ -1,7 +1,12 @@
 package com.app.entites;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,5 +42,9 @@ public class PoliceConstable extends BaseEntity {
     @ManyToOne
     @NotNull
     private PoliceStation policeStation;
+    
+    @OneToMany(mappedBy = "assignedPoliceConstable", cascade = CascadeType.ALL)
+    private Set<Complaint> assignedComplaints = new HashSet<>(); // Added relationship to Complaint
+
 
 }

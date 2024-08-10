@@ -13,18 +13,23 @@ import com.app.entites.Address;
 import com.app.enums.Gender;
 import com.app.enums.Role;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Userdto {
-    
+	
+	
     @NotNull
     @Positive
-    private double contactNo;
+    private String contactNo;
 
     @NotNull
     @Past

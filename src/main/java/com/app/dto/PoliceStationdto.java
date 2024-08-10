@@ -11,16 +11,16 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
-public class Feedbackdto {
-	
-	    @NotBlank
-	    @Size(min = 10, max = 1000)
-	    private String content;
-	    
-	    private Long userId;
+@NoArgsConstructor
+@AllArgsConstructor
+public class PoliceStationdto {
 
+	@NotBlank
+    @Size(max = 100)
+    private String name;
 
+    @NotBlank
+    @Size( max = 255)
+    private String area;
 }
