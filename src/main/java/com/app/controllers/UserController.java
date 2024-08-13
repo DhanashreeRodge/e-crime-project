@@ -34,6 +34,8 @@
 package com.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,10 +51,15 @@ import com.app.services.IUserServices;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
     private IUserServices userServices;
+    
+    public UserController() {
+    	System.out.println("In constructor"+getClass());
+    }
 
     @PostMapping("/register")
     public Userdto addUser(@RequestBody Userdto user) {
@@ -116,5 +123,12 @@ public class UserController {
     	userServices.editMissingPerson(id, cdto);
     	
     	return cdto;
+    }
+    
+    @GetMapping("/get/{id}")
+    public Userdto gellAllDetails(@PathVariable Long id) {
+    	System.out.println("In Controller get details");
+    	return userServices.getAllDetails(id);
+    	
     }
 }

@@ -2,16 +2,13 @@ package com.app.dto;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-
-import com.app.entites.Address;
-import com.app.enums.Gender;
-import com.app.enums.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +26,7 @@ public class Userdto {
 	
     @NotNull
     @Positive
+    @Size(max=10)
     private String contactNo;
 
     @NotNull
@@ -38,6 +36,7 @@ public class Userdto {
     @NotNull
     @Email
     @Size(max = 100)
+    @Column(unique=true, nullable=false)
     private String emailId;
 
     @NotBlank

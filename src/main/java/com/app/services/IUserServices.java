@@ -2,6 +2,7 @@ package com.app.services;
 
 import com.app.dto.Complaintdto;
 import com.app.dto.Feedbackdto;
+import com.app.dto.Logindto;
 import com.app.dto.MissingPersondto;
 import com.app.dto.Userdto;
 import com.app.entites.Complaint;
@@ -25,5 +26,9 @@ public interface IUserServices {
 	public Complaint editComplaint(Long id, Complaintdto cdto);
 	
 	public Missing_Person editMissingPerson(Long id, MissingPersondto cdto);
+	
+	public Userdto getAllDetails(Long id);
+	
+	public Userdto signIn(Userdto logindto);
 
 }

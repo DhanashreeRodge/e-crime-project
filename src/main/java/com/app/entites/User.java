@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,6 +45,7 @@ public class User extends BaseEntity {
 
 	@NotNull
 	@Positive
+	@Size(max=10)
 	private String contactNo;
 
 	@NotNull
@@ -53,6 +55,7 @@ public class User extends BaseEntity {
 	@NotNull
 	@Email
 	@Size(max = 100)
+	@Column(unique=true, nullable=false)
 	private String emailId;
 
 	@NotBlank

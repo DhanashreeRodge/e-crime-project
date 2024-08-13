@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.dto.Complaintdto;
 import com.app.dto.Feedbackdto;
+import com.app.dto.Logindto;
 import com.app.dto.MissingPersondto;
 import com.app.dto.Userdto;
 import com.app.entites.Address;
@@ -19,6 +20,7 @@ import com.app.enums.Category;
 import com.app.enums.Gender;
 import com.app.enums.Role;
 import com.app.enums.Status;
+import com.app.exception.InvalidCredentialsException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.repository.IComplaintRepository;
 import com.app.repository.IFeedbackRepository;
@@ -46,6 +48,12 @@ public class UserServices implements IUserServices {
 	@Override
 	public User addUser(Userdto userdto) {
 		// TODO Auto-generated method stub
+		
+		if(userRepository.findByEmailId(userdto.getEmailId()).isPresent()) {
+			throw new IllegalArgumentException("Email ID is already exist");
+		}
+		
+		validatePassword(userdto.getPassword());
 
 		User users = new User();
 		users.setFirstName(userdto.getFirstName());
@@ -72,6 +80,12 @@ public class UserServices implements IUserServices {
 
 		return userRepository.save(users);
 
+	}
+	
+	private void validatePassword(String password) {
+		if(password == null || password.length() < 8 || !password.matches(".*\\d.*")) {
+			throw new IllegalArgumentException("Password must be at least 8 characters long and contain at least one digit.");
+		}
 	}
 
 	@Override
@@ -174,6 +188,25 @@ public class UserServices implements IUserServices {
 				.orElseThrow(() -> new RuntimeException("Invalid Missing Person Id"));
 		modelmapper.map(cdto,ms);
 		return missingPersonRepository.save(ms);
+	}
+
+	@Override
+	public Userdto getAllDetails(Long id) {
+		
+		User users=userRepository.findById(id)
+				.orElseThrow(() ->new RuntimeException ("Invalid User Id"));
+		return modelmapper.map(users,Userdto.class);
+		
+		//return userRepository.findAllById(users);
+	}
+
+	@Override
+	public Userdto signIn(Userdto logindto) {
+		
+		System.out.println(logindto.getEmailId()+ " "+logindto.getPassword());
+		User users=userRepository.findByEmailIdAndPassword(logindto.getEmailId(), logindto.getPassword())
+				.orElseThrow(()-> new InvalidCredentialsException("Invalid Email And Password"));
+		return modelmapper.map(users,Userdto.class );
 	}
 	
 	
