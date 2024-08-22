@@ -3,6 +3,7 @@ package com.app.controllers;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,14 +23,7 @@ public class AuthController {
 	@Autowired
 	private IUserServices userServices;
 	
-//	@PostMapping("/login")
-//	public Logindto signIn(@RequestBody Logindto logindto)
-//	{
-//		userServices.signIn(logindto);
-//		session.setAttribute("user", userdto);
-//		return logindto;
-//		
-//	}
+
 	
 	@PostMapping("/login")
     public Userdto signIn(@RequestBody Userdto logindto, HttpSession session) {
@@ -41,7 +35,14 @@ public class AuthController {
         session.setAttribute("user", userdto);
         
         // Return the original Logindto object (or modify it if needed)
-        return logindto;
+        return userdto;
     }
+	
+	 @PostMapping("/logout")
+	    public ResponseEntity<Void> logout(HttpSession session) {
+	        // Invalidate the session to log the user out
+	        session.invalidate();
+	        return ResponseEntity.ok().build();
+	    }
 
 }

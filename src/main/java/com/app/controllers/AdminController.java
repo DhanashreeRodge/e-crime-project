@@ -20,6 +20,7 @@ import com.app.dto.PoliceConstabledto;
 import com.app.dto.PoliceStationRetrievedto;
 import com.app.dto.PoliceStationdto;
 import com.app.entites.Complaint;
+import com.app.entites.Criminal;
 import com.app.entites.PoliceConstable;
 import com.app.entites.PoliceStation;
 import com.app.enums.Status;
@@ -68,7 +69,8 @@ public class AdminController {
 	}
 	
 	@PostMapping("/updateComplaintStatusByUserId")
-    public ResponseEntity<String> updateComplaintStatusByUserId(@RequestParam Long userId, @RequestParam Long complaintId, @RequestParam Status newStatus) {
+    public ResponseEntity<String> updateComplaintStatusByUserId(@RequestParam Long userId, @RequestParam Long complaintId, 
+    		@RequestParam Status newStatus) {
         try {
             adminService.updateComplaintStatus(userId, complaintId, newStatus);
             return ResponseEntity.ok("Complaint status updated successfully.");
@@ -112,5 +114,21 @@ public class AdminController {
 		
 	  } 
 	  }
+	  
+	  @GetMapping("/getComplaintById")
+	    public ResponseEntity<Complaintdto> getComplaintById(@RequestParam Long complaintId) {
+	        try {
+	            Complaintdto complaint = adminService.getComplaintById(complaintId);
+	            return ResponseEntity.ok(complaint);
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
+	    }
+	  
+	  @GetMapping("/getAllCriminals")
+	  public List<Criminal> getAllCriminals() {
+		  List<Criminal> criminals=adminService.getAllCriminals();
+	        return criminals;
+	    }
 	 
 }

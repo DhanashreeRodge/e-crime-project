@@ -23,6 +23,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Complaintdto {
+	
+	private Long complaintId;
 
 	@NotNull
     @Size(min = 5, max = 100)
@@ -47,5 +49,23 @@ public class Complaintdto {
 
     @NotNull
     private Long userId;  // ID of the user making the complaint
+    
+    public Complaintdto(String complaintTitle, String complaintDescription, LocalDate complaintDate, Status status,
+    		Category category, String location, Long userId, Long complaintId) {
+        this.complaintTitle = complaintTitle;
+        this.complaintDescription = complaintDescription;
+        this.complaintDate = complaintDate;
+        this.status = status;
+        this.category = category;
+        this.location = location;
+        this.userId = userId;
+        this.complaintId = complaintId;
+    }
 	
+  public Complaintdto(String complaintTitle2, Status status2, Category category2) {
+		
+		this.complaintTitle=complaintTitle2;
+		this.status=status2;
+		this.category=category2;
+	}
 }

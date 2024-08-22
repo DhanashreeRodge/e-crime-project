@@ -17,7 +17,7 @@ import lombok.ToString;
 public class PoliceStationRetrievedto {
 
 	
-	private Long policeStionId;
+	private Long policeStationId;
 	
 	@NotBlank
     @Size(max = 100)

@@ -20,10 +20,12 @@ import com.app.dto.PoliceConstabledto;
 import com.app.dto.PoliceStationRetrievedto;
 import com.app.dto.PoliceStationdto;
 import com.app.entites.Complaint;
+import com.app.entites.Criminal;
 import com.app.entites.Feedback;
 import com.app.entites.PoliceConstable;
 import com.app.entites.PoliceStation;
 import com.app.enums.Status;
+import com.app.repository.CriminalRepository;
 import com.app.repository.IAdminRepository;
 import com.app.repository.IComplaintRepository;
 import com.app.repository.IFeedbackRepository;
@@ -50,19 +52,11 @@ public class AdminServices implements IAdminServices{
 	private IPoliceConstableRepository policeConstableRepository;
 	
 	@Autowired
+	private CriminalRepository criminalRepository;
+	
+	@Autowired
 	private ModelMapper modelmapper;
 	
-	
-
-//	@Override
-//	public List<Complaintdto> getAllComplaints() {
-//			return complaintRepository.findAll() //List<Complaint>
-//					.stream() //Stream<Compliant>
-//					.map(complaint -> 
-//					modelmapper.map(complaint,Complaintdto.class)) //Stream<dto>
-//					.peek(complaintdto -> complaintdto.setUserId(complaintdto.getUserId()))
-//					.collect(Collectors.toList());
-//		}
 
 
 	@Override
@@ -71,24 +65,11 @@ public class AdminServices implements IAdminServices{
     
     List<Complaintdto> complaintDtos = complaintEntities.stream()
         .map(complaint -> new Complaintdto(complaint.getComplaintTitle(),complaint.getComplaintDescription(),
-        		complaint.getComplaintDate(),complaint.getStatus(),complaint.getCategory(),complaint.getLocation() ,complaint.getUser().getId()))
+        		complaint.getComplaintDate(),complaint.getStatus(),complaint.getCategory(),complaint.getLocation() ,complaint.getUser().getId(),complaint.getId()))
         .collect(Collectors.toList());
         
     return complaintDtos;
    }
-
-
-//	@Override
-//	public List<Feedbackdto> getAllFeedbacks() {
-//		
-//		return feedbackRepository.findAll() //List<Feedback>
-//				.stream() //Stream<Feedback>
-//				.map(feedback -> 
-//				modelmapper.map(feedback,Feedbackdto.class))//Stream<dto>
-//				.peek(feedbackdto -> feedbackdto.setUserId(feedbackdto.getUserId())) // Assuming getId() gives the userId
-//				.collect(Collectors.toList());
-//	}
-//	}
 
 	@Override
     public List<Feedbackdto> getAllFeedbacks() {
@@ -120,7 +101,7 @@ public class AdminServices implements IAdminServices{
         constable.setLastName(policeConstabledto.getLastName());
         constable.setBadgeNumber(policeConstabledto.getBadgeNumber());
         
-        PoliceStation station = policeSationRepository.findById(policeConstabledto.getPoliceSationId())
+        PoliceStation station = policeSationRepository.findById(policeConstabledto.getPoliceStationId())
                 .orElseThrow(() -> new RuntimeException("Police Station not found"));
         constable.setPoliceStation(station);
 
@@ -129,6 +110,7 @@ public class AdminServices implements IAdminServices{
 	}
 	
 	public void updateComplaintStatus(Long userId, Long complaintId, Status newStatus) {
+		 System.out.println("Received request with userId: " + userId + ", complaintId: " + complaintId + ", newStatus: " + newStatus);
         Optional<Complaint> optionalComplaint = complaintRepository.findByUserIdAndId(userId, complaintId);
         if (optionalComplaint.isPresent()) {
             Complaint complaint = optionalComplaint.get();
@@ -189,4 +171,34 @@ public class AdminServices implements IAdminServices{
             throw new RuntimeException("Complaint or Police Constable not found with provided IDs.");
         }
     }
+    
+    
+    public Complaintdto getComplaintById(Long complaintId) {
+        Optional<Complaint> optionalComplaint = complaintRepository.findById(complaintId);
+
+        if (optionalComplaint.isPresent()) {
+            Complaint complaint = optionalComplaint.get();
+            Complaintdto complaintdto = new Complaintdto(
+                    complaint.getId(), // complaintId
+                    complaint.getComplaintTitle(),
+                    complaint.getComplaintDescription(),
+                    complaint.getComplaintDate(),
+                    complaint.getStatus(),
+                    complaint.getCategory(),
+                    complaint.getLocation(),
+                    complaint.getUser().getId() // userId
+                );
+           return complaintdto;
+            
+        } else {
+            throw new RuntimeException("Complaint not found with ID: " + complaintId);
+        }
+    }
+
+
+	@Override
+	public List<Criminal> getAllCriminals() {
+		
+		return criminalRepository.findAll();
+	}
 }

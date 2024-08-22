@@ -1,5 +1,11 @@
 package com.app.services;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.management.RuntimeErrorException;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
@@ -8,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.app.dto.Complaintdto;
 import com.app.dto.Feedbackdto;
-import com.app.dto.Logindto;
 import com.app.dto.MissingPersondto;
 import com.app.dto.Userdto;
 import com.app.entites.Address;
@@ -16,7 +21,6 @@ import com.app.entites.Complaint;
 import com.app.entites.Feedback;
 import com.app.entites.Missing_Person;
 import com.app.entites.User;
-import com.app.enums.Category;
 import com.app.enums.Gender;
 import com.app.enums.Role;
 import com.app.enums.Status;
@@ -87,48 +91,6 @@ public class UserServices implements IUserServices {
 			throw new IllegalArgumentException("Password must be at least 8 characters long and contain at least one digit.");
 		}
 	}
-
-	@Override
-	public Complaint addComplaint(Complaintdto complaintdto) {
-
-		Complaint complaints = new Complaint();
-		complaints.setComplaintTitle(complaintdto.getComplaintTitle());
-		complaints.setComplaintDescription(complaintdto.getComplaintDescription());
-		complaints.setComplaintDate(complaintdto.getComplaintDate());
-		complaints.setLocation(complaintdto.getLocation());
-//		complaints.setCategory(Category.valueOf(complaintdto.getCategory()));
-//		//complaints.setCategory(Category.valueOf(complaintdto.getCategory()));
-//		complaints.setStatus(Status.valueOf(complaintdto.getStatus()));
-//		return  complaintRepository.save(complaints);
-		//complaints.setUserId(complaintdto.getUser().getId());
-		complaints.setCategory((complaintdto.getCategory()));
-		complaints.setStatus((complaintdto.getStatus()));
-
-		User user = userRepository.findById(complaintdto.getUserId())
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		complaints.setUser(user);
-
-		Complaint savedComplaint = complaintRepository.save(complaints);
-		
-		return savedComplaint;
-		// Save the complaint entity
-		//return complaintRepository.save(complaints);
-	}
-
-//	@Override
-//	public Feedback addFeedback(Feedbackdto feedbackdto) {
-//		
-//		User feedback = userRepository.findById(feedbackdto.getUserId())
-//				.orElseThrow(()->
-//				new ResourceNotFoundException("Invalid Id"));
-//		
-//		
-//		Feedback feed=modelmapper.map(feedbackdto, Feedback.class);
-//		feed.setUser(feedback);
-//		return feedbackRepository.save(feed);
-//				
-//			}
-//
 	@Override
 	public Feedback addFeedback(Feedbackdto feedbackdto) {
 	    // Fetch the User entity based on userId from the Feedbackdto
@@ -144,21 +106,6 @@ public class UserServices implements IUserServices {
 	    // Save the Feedback entity in the repository
 	    return feedbackRepository.save(feedback);
 	}
-
-	@Override
-	public Missing_Person addMissingPerson(MissingPersondto missingdto) {
-		
-		Complaint complaints=complaintRepository.findById(missingdto.getComplaintId())
-				.orElseThrow(() -> new ResourceNotFoundException("Invalid Complaint Id"));
-		
-		Missing_Person ms=modelmapper.map(missingdto, Missing_Person.class);
-		
-		ms.setComplaint(complaints);
-		
-		
-		return missingPersonRepository.save(ms);
-	}
-
 	@Override
 	public User editUser(Long id,Userdto userdto) {
 		
@@ -208,7 +155,99 @@ public class UserServices implements IUserServices {
 				.orElseThrow(()-> new InvalidCredentialsException("Invalid Email And Password"));
 		return modelmapper.map(users,Userdto.class );
 	}
-	
-	
 
+	@Override
+	public Status getComplaintStatus(Long complaintId) {
+		
+		Optional<Complaint> optionalComplaint = complaintRepository.findById(complaintId);
+		if(optionalComplaint.isPresent()) {
+			//return optionalComplaint.get().getStatus();
+			return optionalComplaint.get().getStatus();
+		} else {
+			throw new RuntimeException( "Complaint not found with id" + complaintId);
+		}
+	
+	}
+
+	@Override
+	public List<Complaintdto> getUserComplaints(Long userId) {
+		
+	    List<Complaint> complaints = complaintRepository.findByUserId(userId);
+	    return complaints.stream()
+	        .map(complaint -> {
+	            Complaintdto dto = new Complaintdto();
+	            dto.setComplaintTitle(complaint.getComplaintTitle());
+	            dto.setComplaintDescription(complaint.getComplaintDescription());
+	            dto.setComplaintDate(complaint.getComplaintDate());
+	            dto.setStatus(complaint.getStatus());
+	            dto.setCategory(complaint.getCategory());
+	            dto.setLocation(complaint.getLocation());
+	            dto.setUserId(complaint.getId());
+	            // Map other fields as necessary
+	            return dto;
+	        })
+	        .collect(Collectors.toList());
+	}
+
+	@Override
+	public Complaint addComplaint(Complaintdto complaintDTO, List<MissingPersondto> missingPersonDTOs) {
+		    // Map ComplaintDTO to Complaint entity
+	        Complaint complaint = new Complaint();
+	        //complaint.setId(complaintDTO.getComplaintId());
+	        complaint.setComplaintTitle(complaintDTO.getComplaintTitle());
+	        complaint.setComplaintDescription(complaintDTO.getComplaintDescription());
+	        complaint.setComplaintDate(complaintDTO.getComplaintDate());
+	        complaint.setLocation(complaintDTO.getLocation());
+	        complaint.setCategory(complaintDTO.getCategory());
+	        complaint.setStatus(Status.PENDING);
+
+	        // Retrieve the User entity from userId
+	        User user = userRepository.findById(complaintDTO.getUserId())
+	                .orElseThrow(() -> new RuntimeException("User not found with id: " + complaintDTO.getUserId()));
+	        complaint.setUser(user);
+
+	        // Save the complaint first
+	        Complaint savedComplaint = complaintRepository.save(complaint);
+
+	        // Map MissingPersonDTOs to MissingPerson entities and save them
+	        for (MissingPersondto missingPersonDTO : missingPersonDTOs) {
+	            Missing_Person missingPerson = new Missing_Person();
+	            missingPerson.setFirstName(missingPersonDTO.getFirstName());
+	            missingPerson.setLastName(missingPersonDTO.getLastName());
+	            missingPerson.setGender(missingPersonDTO.getGender());
+	            missingPerson.setMissingSince(missingPersonDTO.getMissingSince());
+	            missingPerson.setLastKnownLocation(missingPersonDTO.getLastKnownLocation());
+	            missingPerson.setImageUrl(missingPersonDTO.getImageUrl());
+	            missingPerson.setContactNo(missingPersonDTO.getContactNo());
+	            missingPerson.setAge(missingPersonDTO.getAge());
+	            missingPerson.setComplaint(savedComplaint);
+
+	            // Save each missing person
+	            missingPersonRepository.save(missingPerson);
+	        }
+
+	        return savedComplaint;
+	    }
+
+	@Override
+	public List<Complaintdto> getComplaintsByUserId(Long userId) {
+        List<Complaint> complaints = complaintRepository.findByUserId(userId);
+
+        return complaints.stream()
+            .map(complaint -> new Complaintdto(
+                complaint.getComplaintTitle(),
+              
+               // complaint.getDateCreated(),
+                complaint.getStatus(),
+                complaint.getCategory()
+               
+                
+               
+            ))
+            .collect(Collectors.toList());
+    }
+	
 }
+			
+
+

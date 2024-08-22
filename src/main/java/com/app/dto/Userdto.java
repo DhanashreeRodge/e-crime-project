@@ -23,6 +23,7 @@ import lombok.ToString;
 @ToString
 public class Userdto {
 	
+	private Long id;
 	
     @NotNull
     @Positive

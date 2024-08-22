@@ -33,5 +33,5 @@ public class PoliceConstabledto {
     private String badgeNumber;
 
     @NotBlank
-    private Long policeSationId;
+    private Long policeStationId;
 }

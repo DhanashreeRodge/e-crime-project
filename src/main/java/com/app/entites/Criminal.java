@@ -1,6 +1,7 @@
 package com.app.entites;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,11 +24,12 @@ import lombok.ToString;
 @ToString
 public class Criminal extends BaseEntity {
 	
+	@Column
 	private String criminalName;
 
-	@OneToOne(cascade =CascadeType.ALL,fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_id")
-	private Address criminalAddress; 
+	
+	@Column
+	private String criminalAddress; 
 	
 	
 	

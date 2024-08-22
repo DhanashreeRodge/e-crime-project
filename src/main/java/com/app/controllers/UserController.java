@@ -33,7 +33,13 @@
 
 package com.app.controllers;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,17 +47,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.dto.ComplaintRequest;
+import com.app.dto.ComplaintResponseDto;
 import com.app.dto.Complaintdto;
 import com.app.dto.Feedbackdto;
 import com.app.dto.MissingPersondto;
 import com.app.dto.Userdto;
+import com.app.entites.Complaint;
+import com.app.enums.Status;
 import com.app.services.IUserServices;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3001",allowCredentials = "true")
 public class UserController {
 
     @Autowired
@@ -69,16 +80,6 @@ public class UserController {
         userServices.addUser(user);
         return user;
     }
-    
-    @PostMapping("/complaints")
-    public Complaintdto addComplaint(@RequestBody Complaintdto complaintdto)
-    {
-    	System.out.println("In controller add complaint");
-    	userServices.addComplaint(complaintdto);
-		return complaintdto;
-    	
-    }
-    
     @PostMapping("/feedback")
     public Feedbackdto addFeedback(@RequestBody Feedbackdto feedbackdto)
     {
@@ -86,16 +87,6 @@ public class UserController {
     	
     	userServices.addFeedback(feedbackdto);
 		return feedbackdto;
-    	
-    }
-    
-    @PostMapping("/missing")
-    public MissingPersondto addMissingPerson(@RequestBody MissingPersondto missingdto)
-    {
-    	System.out.println("In controller add Missing");
-    	
-    	userServices.addMissingPerson(missingdto);
-		return missingdto;
     	
     }
     
@@ -131,4 +122,46 @@ public class UserController {
     	return userServices.getAllDetails(id);
     	
     }
+    
+    
+    @PostMapping("/add")
+    public ResponseEntity<Complaintdto> addComplaint(@RequestBody ComplaintRequest request, HttpSession session) {
+        // Retrieve user from session
+        Userdto userdto = (Userdto) session.getAttribute("user");
+        if (userdto == null) {
+            // Return 401 Unauthorized if user is not in session
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        Long userId = userdto.getId(); // Retrieve userId from the session
+        Complaintdto complaintDTO = request.getComplaint();
+        List<MissingPersondto> missingPersonDTOs = request.getMissingPersons();
+
+        // Set userId in complaintDTO
+        complaintDTO.setUserId(userId);
+
+        // Call service to add complaint
+        Complaint savedComplaint = userServices.addComplaint(complaintDTO, missingPersonDTOs);
+        
+        // Create a response DTO
+        ComplaintResponseDto responseDto = new ComplaintResponseDto();
+        responseDto.setComplaintId(savedComplaint.getId());
+        responseDto.setStatus(savedComplaint.getStatus());
+        responseDto.setComplaintTitle(savedComplaint.getComplaintTitle()); // Include other fields as needed
+
+
+
+        return ResponseEntity.ok(complaintDTO);
+    }
+    
+    
+    @GetMapping("/getAllComplaintsByuserId/{userId}")
+    public ResponseEntity<List<Complaintdto>> getComplaintsByUserId(@PathVariable Long userId) {
+        List<Complaintdto> complaints = userServices.getComplaintsByUserId(userId);
+        if (complaints.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(complaints, HttpStatus.OK);
+    }
 }
+

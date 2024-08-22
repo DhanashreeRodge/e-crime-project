@@ -11,6 +11,7 @@ import com.app.dto.PoliceConstableRetrievedto;
 import com.app.dto.PoliceConstabledto;
 import com.app.dto.PoliceStationRetrievedto;
 import com.app.dto.PoliceStationdto;
+import com.app.entites.Criminal;
 import com.app.entites.PoliceConstable;
 
 import com.app.enums.Status;
@@ -33,4 +34,8 @@ public interface IAdminServices {
 	 public List<PoliceConstableRetrievedto> getPoliceConstablesByStationId(Long policeStationId);
 	 
 	 public void assignPoliceConstableToComplaint(Long complaintId, Long policeConstableId);
+	 
+	 public Complaintdto getComplaintById(Long complaintId);
+	 
+	 public List<Criminal> getAllCriminals() ;
 }
